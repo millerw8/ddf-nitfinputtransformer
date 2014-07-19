@@ -145,10 +145,10 @@ public class NitfInputTransformer implements InputTransformer {
         StringBuilder metadataXml = new StringBuilder();
         metadataXml.append("<metadata>\n");
         metadataXml.append("  <file>\n");
-        metadataXml.append("    <fileType>");
-        metadataXml.append(nitfFile.getFileType());
-        metadataXml.append("</fileType>");
-        // TODO: output top level file stuff
+        metadataXml.append("    <fileType>" + nitfFile.getFileType() + "</fileType>\n");
+        metadataXml.append("    <complexityLevel>" + nitfFile.getComplexityLevel() + "</complexityLevel>\n");
+        metadataXml.append("    <originatingStationId>" + nitfFile.getOriginatingStationId() + "</originatingStationId>\n");
+        // TODO: output remaining top level file stuff
         // TODO: output TREs for file
         metadataXml.append("  </file>\n");
         // TODO: output each image

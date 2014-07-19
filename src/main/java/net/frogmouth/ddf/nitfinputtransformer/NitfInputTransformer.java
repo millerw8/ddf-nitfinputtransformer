@@ -72,9 +72,11 @@ public class NitfInputTransformer implements InputTransformer {
             metacard.setCreatedDate(nitfFile.getFileDateTime());
             // TODO: modified date from HISTOA?
             metacard.setTitle(nitfFile.getFileTitle());
+
             setLocation(nitfFile, metacard);
-            // TODO: read more metadata here and dump into metacard
-            metacard.setMetadata("<xml>NITF HACK</xml>");
+
+            setMetadata(nitfFile, metacard);
+
             if (id != null) {
                 metacard.setId(id);
             } else {
@@ -137,6 +139,23 @@ public class NitfInputTransformer implements InputTransformer {
         coords[3] = new Coordinate(imageCoordinates.getCoordinateMaxRow0().getLongitude(), imageCoordinates.getCoordinateMaxRow0().getLatitude());
         LinearRing externalRing = geomFactory.createLinearRing(coords);
         return geomFactory.createPolygon(externalRing, null);
+    }
+
+    private void setMetadata(NitfHeaderReader nitfFile, MetacardImpl metacard) {
+        StringBuilder metadataXml = new StringBuilder();
+        metadataXml.append("<metadata>\n");
+        metadataXml.append("  <file>\n");
+        metadataXml.append("    <fileType>");
+        metadataXml.append(nitfFile.getFileType());
+        metadataXml.append("</fileType>");
+        // TODO: output top level file stuff
+        // TODO: output TREs for file
+        metadataXml.append("  </file>\n");
+        // TODO: output each image
+        // TODO: output TREs for each image
+        // TODO: same for graphic, text
+        metadataXml.append("</metadata>\n");
+        metacard.setMetadata(metadataXml.toString());
     }
 
     @Override

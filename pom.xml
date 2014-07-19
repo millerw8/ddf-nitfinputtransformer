@@ -40,38 +40,12 @@
     </repositories>
 
     <dependencies>
-<!--        <dependency>
-            <groupId>ddf</groupId>
-            <artifactId>ddf</artifactId>
-            <type>pom</type>
-            <version>${ddf.version}</version>
-        </dependency>-->
 
         <dependency>
             <groupId>ddf.catalog.core</groupId>
             <artifactId>catalog-core-api</artifactId>
             <version>${ddfcatalog.version}</version>
         </dependency>
-
-<!--        <dependency>
-            <groupId>ddf.catalog.common</groupId>
-            <artifactId>geo-formatter</artifactId>
-            <version>${ddfcatalog.version}</version>
-        </dependency>-->
-        
-<!--        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-core</artifactId>
-            <version>1.9.0</version>
-            <scope>test</scope>
-        </dependency>-->
-
-<!--        <dependency>
-            <groupId>org.hamcrest</groupId>
-            <artifactId>hamcrest-all</artifactId>
-            <version>1.1</version>
-            <scope>test</scope>
-        </dependency>-->
 
         <dependency>
             <groupId>com.vividsolutions</groupId>
@@ -109,24 +83,17 @@
                         <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
                         <Embed-Dependency>nitf-file-reader</Embed-Dependency>
                         <Import-Package>
-<!--                            ddf.catalog.federation,-->
                             ddf.catalog.source,
                             ddf.catalog.transform,
                             ddf.catalog.data,
                             ddf.catalog.data.metacardtype,
                             ddf.catalog,
-<!--                            ddf.geo.formatter,-->
                             org.osgi.framework,
                             org.osgi.service.blueprint,
                             com.vividsolutions.jts.*,
-<!--                            org.apache.commons.io,
-                            org.apache.commons.lang,-->
                             org.osgi.service.cm,
-                            <!--                            javax.xml.parsers,-->
                             javax.xml.bind.annotation, 
-                            <!--javax.xml.datatype,-->
                             javax.xml.bind,
-                            <!--javax.xml.namespace,-->
                             org.slf4j,
                             org.w3c.dom,
                             org.xml.sax

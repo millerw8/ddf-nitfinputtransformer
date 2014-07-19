@@ -14,22 +14,20 @@ package net.frogmouth.ddf.nitfinputtransformer;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.ParseException;
-// import java.util.Date;
-// 
-// import javax.xml.bind.JAXBException;
-// 
+import java.util.ArrayList;
+
 import ddf.catalog.data.BasicTypes;
 import ddf.catalog.data.Metacard;
 import ddf.catalog.data.MetacardImpl;
 import ddf.catalog.CatalogFramework;
 import ddf.catalog.transform.CatalogTransformerException;
 import ddf.catalog.transform.InputTransformer;
-// import ddf.geo.formatter.CompositeGeometry;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LinearRing;
+import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Polygon;
 import com.vividsolutions.jts.geom.PrecisionModel;
 
@@ -59,13 +57,11 @@ public class NitfInputTransformer implements InputTransformer {
      */
     @Override
     public Metacard transform(InputStream input) throws IOException, CatalogTransformerException {
-        LOGGER.info("NitfInputTransformer transform(input)");
         return transform(input, null);
     }
 
     @Override
     public Metacard transform(InputStream input, String id) throws IOException, CatalogTransformerException {
-        LOGGER.info("NitfInputTransformer transform(input, id)");
         if (input == null) {
             throw new CatalogTransformerException("Cannot transform null input.");
         }
@@ -107,27 +103,40 @@ public class NitfInputTransformer implements InputTransformer {
             // TODO: add more coordinate support
             if ((segment.getImageCoordinatesRepresentation() == ImageCoordinatesRepresentation.GEOGRAPHIC) ||
                 (segment.getImageCoordinatesRepresentation() == ImageCoordinatesRepresentation.DECIMALDEGREES)) {
-                Coordinate coords[] = new Coordinate[5];
-                ImageCoordinates imageCoordinates = segment.getImageCoordinates();
-                coords[0] = new Coordinate(imageCoordinates.getCoordinate00().getLongitude(), imageCoordinates.getCoordinate00().getLatitude());
-                coords[4] = new Coordinate(coords[0]);
-                coords[1] = new Coordinate(imageCoordinates.getCoordinate0MaxCol().getLongitude(), imageCoordinates.getCoordinate0MaxCol().getLatitude());
-                coords[2] = new Coordinate(imageCoordinates.getCoordinateMaxRowMaxCol().getLongitude(), imageCoordinates.getCoordinateMaxRowMaxCol().getLatitude());
-                coords[3] = new Coordinate(imageCoordinates.getCoordinateMaxRow0().getLongitude(), imageCoordinates.getCoordinateMaxRow0().getLatitude());
-                LinearRing externalRing = geomFactory.createLinearRing(coords);
-                System.out.println("LinearRing:" + externalRing.toText());
-                Polygon polygon = geomFactory.createPolygon(externalRing, null);
-                System.out.println("Polygon:" + polygon.toText());
+                Polygon polygon = getPolygonForSegment(segment, geomFactory);
                 metacard.setLocation(polygon.toText());
+            } else if (segment.getImageCoordinatesRepresentation() != ImageCoordinatesRepresentation.NONE) {
+                System.out.println("Unsupported representation:" + segment.getImageCoordinatesRepresentation());
             }
         } else {
-            // TODO create multipolygon
+            ArrayList<Polygon> polygons = new ArrayList<Polygon>();
             for (int i = 0; i < nitfFile.getNumberOfImageSegments(); ++i) {
                 NitfImageSegment segment = nitfFile.getImageSegmentZeroBase(i);
-                // TODO: add this polygon to the multipolygon
+                if ((segment.getImageCoordinatesRepresentation() == ImageCoordinatesRepresentation.GEOGRAPHIC) ||
+                    (segment.getImageCoordinatesRepresentation() == ImageCoordinatesRepresentation.DECIMALDEGREES)) {
+                    polygons.add(getPolygonForSegment(segment, geomFactory));
+                } else if (segment.getImageCoordinatesRepresentation() != ImageCoordinatesRepresentation.NONE) {
+                    System.out.println("Unsupported representation:" + segment.getImageCoordinatesRepresentation());
+                }
             }
-            // TODO: turn multipolygon into WKT
+            Polygon polyAry[] = polygons.toArray(new Polygon[0]);
+            MultiPolygon multiPolygon = geomFactory.createMultiPolygon(polyAry);
+            // TODO: Ideally we'd use multiPolygon directly here.
+            Polygon boundingPolygon = (Polygon)multiPolygon.getEnvelope();
+            metacard.setLocation(boundingPolygon.toText());
         }
+    }
+
+    private Polygon getPolygonForSegment(NitfImageSegment segment, GeometryFactory geomFactory) {
+        Coordinate coords[] = new Coordinate[5];
+        ImageCoordinates imageCoordinates = segment.getImageCoordinates();
+        coords[0] = new Coordinate(imageCoordinates.getCoordinate00().getLongitude(), imageCoordinates.getCoordinate00().getLatitude());
+        coords[4] = new Coordinate(coords[0]);
+        coords[1] = new Coordinate(imageCoordinates.getCoordinate0MaxCol().getLongitude(), imageCoordinates.getCoordinate0MaxCol().getLatitude());
+        coords[2] = new Coordinate(imageCoordinates.getCoordinateMaxRowMaxCol().getLongitude(), imageCoordinates.getCoordinateMaxRowMaxCol().getLatitude());
+        coords[3] = new Coordinate(imageCoordinates.getCoordinateMaxRow0().getLongitude(), imageCoordinates.getCoordinateMaxRow0().getLatitude());
+        LinearRing externalRing = geomFactory.createLinearRing(coords);
+        return geomFactory.createPolygon(externalRing, null);
     }
 
     @Override

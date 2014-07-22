@@ -33,7 +33,7 @@ import com.vividsolutions.jts.geom.PrecisionModel;
 
 import org.codice.nitf.filereader.ImageCoordinates;
 import org.codice.nitf.filereader.ImageCoordinatesRepresentation;
-import org.codice.nitf.filereader.NitfHeaderReader;
+import org.codice.nitf.filereader.NitfFile;
 import org.codice.nitf.filereader.NitfImageSegment;
 
 import org.slf4j.Logger;
@@ -68,7 +68,7 @@ public class NitfInputTransformer implements InputTransformer {
 
         MetacardImpl metacard = new MetacardImpl(BasicTypes.BASIC_METACARD);
         try {
-            NitfHeaderReader nitfFile = new NitfHeaderReader(input);
+            NitfFile nitfFile = new NitfFile(input);
             metacard.setCreatedDate(nitfFile.getFileDateTime());
             // TODO: modified date from HISTOA?
             metacard.setTitle(nitfFile.getFileTitle());
@@ -92,7 +92,7 @@ public class NitfInputTransformer implements InputTransformer {
         return metacard;
     }
 
-    private void setLocation(NitfHeaderReader nitfFile, MetacardImpl metacard) {
+    private void setLocation(NitfFile nitfFile, MetacardImpl metacard) {
         GeometryFactory geomFactory = new GeometryFactory(new PrecisionModel(com.vividsolutions.jts.geom.PrecisionModel.FLOATING), 4326);
         if (nitfFile.getNumberOfImageSegments() < 1) {
             return;
@@ -124,6 +124,7 @@ public class NitfInputTransformer implements InputTransformer {
             Polygon polyAry[] = polygons.toArray(new Polygon[0]);
             MultiPolygon multiPolygon = geomFactory.createMultiPolygon(polyAry);
             // TODO: Ideally we'd use multiPolygon directly here.
+            // metacard.setLocation(multiPolygon.toText());
             Polygon boundingPolygon = (Polygon)multiPolygon.getEnvelope();
             metacard.setLocation(boundingPolygon.toText());
         }
@@ -141,7 +142,7 @@ public class NitfInputTransformer implements InputTransformer {
         return geomFactory.createPolygon(externalRing, null);
     }
 
-    private void setMetadata(NitfHeaderReader nitfFile, MetacardImpl metacard) {
+    private void setMetadata(NitfFile nitfFile, MetacardImpl metacard) {
         StringBuilder metadataXml = new StringBuilder();
         metadataXml.append("<metadata>\n");
         metadataXml.append("  <file>\n");

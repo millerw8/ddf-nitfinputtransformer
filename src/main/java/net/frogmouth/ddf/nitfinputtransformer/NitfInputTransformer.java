@@ -113,6 +113,7 @@ public class NitfInputTransformer implements InputTransformer {
                 return;
             }
             // TODO: add more coordinate support
+            // TODO: handle case where its really a point.
             if ((segment.getImageCoordinatesRepresentation() == ImageCoordinatesRepresentation.GEOGRAPHIC) ||
                 (segment.getImageCoordinatesRepresentation() == ImageCoordinatesRepresentation.DECIMALDEGREES)) {
                 Polygon polygon = getPolygonForSegment(segment, geomFactory);
@@ -164,9 +165,23 @@ public class NitfInputTransformer implements InputTransformer {
         metadataXml.append(buildMetadataEntry("originatorsPhoneNumber", nitfFile.getOriginatorsPhoneNumber()));
         metadataXml.append(buildTREsMetadata(nitfFile.getTREsRawStructure()));
         metadataXml.append("  </file>\n");
-        // TODO: output each image
-        // TODO: output TREs for each image
-        // TODO: same for graphic, text
+        for (int i = 0; i < nitfFile.getNumberOfImageSegments(); ++i) {
+            NitfImageSegment image = nitfFile.getImageSegmentZeroBase(i);
+            metadataXml.append("  <image>\n");
+            metadataXml.append(buildMetadataEntry("imageIdentifer1", image.getImageIdentifier1()));
+            metadataXml.append(buildMetadataEntry("imageDateTime", image.getImageDateTime()));
+            metadataXml.append(buildMetadataEntry("imageTargetId", image.getImageTargetId()));
+            metadataXml.append(buildMetadataEntry("imageIdentifer2", image.getImageIdentifier2()));
+            addSecurityMetadata(metadataXml, image.getSecurityMetadata());
+            metadataXml.append(buildMetadataEntry("imageSource", image.getImageSource()));
+            metadataXml.append(buildMetadataEntry("numberOfRows", image.getNumberOfRows()));
+            metadataXml.append(buildMetadataEntry("numberOfColumns", image.getNumberOfColumns()));
+            metadataXml.append(buildMetadataEntry("pixelValueType", image.getPixelValueType().toString()));
+            // TODO: output rest of image metadata
+            // TODO: output TREs for each image
+            metadataXml.append("  </image>\n");
+        }
+        // TODO: data and TREs for graphic, symbol, label, text
         metadataXml.append("</metadata>\n");
         metacard.setMetadata(metadataXml.toString());
     }
@@ -189,7 +204,7 @@ public class NitfInputTransformer implements InputTransformer {
 
     private static void doIndent(StringBuilder treXml, int indentLevel) {
         for (int i = 0; i < indentLevel; ++i) {
-            treXml.append("    ");
+            treXml.append("  ");
         }
     }
 
@@ -219,6 +234,10 @@ public class NitfInputTransformer implements InputTransformer {
 
     private String buildMetadataEntry(String label, int value) {
         return buildMetadataEntry(label, Integer.toString(value));
+    }
+
+    private String buildMetadataEntry(String label, long value) {
+        return buildMetadataEntry(label, Long.toString(value));
     }
 
     private String buildMetadataEntry(String label, Date value) {

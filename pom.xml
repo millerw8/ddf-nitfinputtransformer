@@ -65,6 +65,12 @@
             <version>0.1-SNAPSHOT</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>3.3.2</version>
+        </dependency>
+
     </dependencies>
 
     <build>
@@ -81,7 +87,7 @@
                 <configuration>
                     <instructions>
                         <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
-                        <Embed-Dependency>nitf-file-reader</Embed-Dependency>
+                        <Embed-Dependency>nitf-file-reader,commons-lang3</Embed-Dependency>
                         <Import-Package>
                             ddf.catalog.source,
                             ddf.catalog.transform,
@@ -90,8 +96,8 @@
                             ddf.catalog,
                             org.osgi.framework,
                             org.osgi.service.blueprint,
-                            com.vividsolutions.jts.*,
                             org.osgi.service.cm,
+                            com.vividsolutions.jts.*,
                             javax.xml.bind.annotation, 
                             javax.xml.bind,
                             org.slf4j,

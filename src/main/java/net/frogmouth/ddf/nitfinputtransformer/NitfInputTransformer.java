@@ -15,6 +15,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Date;
+
+import org.apache.commons.lang3.StringEscapeUtils;
 
 import ddf.catalog.data.BasicTypes;
 import ddf.catalog.data.Metacard;
@@ -34,7 +37,9 @@ import com.vividsolutions.jts.geom.PrecisionModel;
 import org.codice.nitf.filereader.ImageCoordinates;
 import org.codice.nitf.filereader.ImageCoordinatesRepresentation;
 import org.codice.nitf.filereader.NitfFile;
+import org.codice.nitf.filereader.NitfFileSecurityMetadata;
 import org.codice.nitf.filereader.NitfImageSegment;
+import org.codice.nitf.filereader.NitfSecurityMetadata;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -124,10 +129,7 @@ public class NitfInputTransformer implements InputTransformer {
             }
             Polygon polyAry[] = polygons.toArray(new Polygon[0]);
             MultiPolygon multiPolygon = geomFactory.createMultiPolygon(polyAry);
-            // TODO: Ideally we'd use multiPolygon directly here.
-            // metacard.setLocation(multiPolygon.toText());
-            Polygon boundingPolygon = (Polygon)multiPolygon.getEnvelope();
-            metacard.setLocation(boundingPolygon.toText());
+            metacard.setLocation(multiPolygon.toText());
         }
     }
 
@@ -147,10 +149,15 @@ public class NitfInputTransformer implements InputTransformer {
         StringBuilder metadataXml = new StringBuilder();
         metadataXml.append("<metadata>\n");
         metadataXml.append("  <file>\n");
-        metadataXml.append("    <fileType>" + nitfFile.getFileType() + "</fileType>\n");
-        metadataXml.append("    <complexityLevel>" + nitfFile.getComplexityLevel() + "</complexityLevel>\n");
-        metadataXml.append("    <originatingStationId>" + nitfFile.getOriginatingStationId() + "</originatingStationId>\n");
-        // TODO: output remaining top level file stuff
+        metadataXml.append(buildMetadataEntry("fileType", nitfFile.getFileType().toString()));
+        metadataXml.append(buildMetadataEntry("complexityLevel", nitfFile.getComplexityLevel()));
+        metadataXml.append(buildMetadataEntry("originatingStationId", nitfFile.getOriginatingStationId()));
+        metadataXml.append(buildMetadataEntry("fileDateTime", nitfFile.getFileDateTime()));
+        metadataXml.append(buildMetadataEntry("fileTitle", nitfFile.getFileTitle()));
+        addFileSecurityMetadata(metadataXml, nitfFile);
+        // TODO: FBKGC
+        metadataXml.append(buildMetadataEntry("originatorsName", nitfFile.getOriginatorsName()));
+        metadataXml.append(buildMetadataEntry("originatorsPhoneNumber", nitfFile.getOriginatorsPhoneNumber()));
         // TODO: output TREs for file
         metadataXml.append("  </file>\n");
         // TODO: output each image
@@ -158,6 +165,37 @@ public class NitfInputTransformer implements InputTransformer {
         // TODO: same for graphic, text
         metadataXml.append("</metadata>\n");
         metacard.setMetadata(metadataXml.toString());
+    }
+
+    private String buildMetadataEntry(String label, int value) {
+        return buildMetadataEntry(label, Integer.toString(value));
+    }
+
+    private String buildMetadataEntry(String label, Date value) {
+        return buildMetadataEntry(label, value.toString());
+    }
+
+    private String buildMetadataEntry(String label, String value) {
+        StringBuilder entryBuilder = new StringBuilder();
+        entryBuilder.append("    <");
+        entryBuilder.append(label);
+        entryBuilder.append(">");
+        entryBuilder.append(StringEscapeUtils.escapeXml(value));
+        entryBuilder.append("</");
+        entryBuilder.append(label);
+        entryBuilder.append(">\n");
+        return entryBuilder.toString();
+    }
+
+    private void addFileSecurityMetadata(StringBuilder metadataXml, NitfFile nitfFile) {
+        NitfFileSecurityMetadata security = nitfFile.getFileSecurityMetadata();
+        addSecurityMetadata(metadataXml, security);
+        // TODO: add FSCOP / FSCPYN values.
+    }
+
+    private void addSecurityMetadata(StringBuilder metadataXml, NitfSecurityMetadata security) {
+        metadataXml.append(buildMetadataEntry("securityClassification", security.getSecurityClassification().toString()));
+        // TODO: add rest of security fields, checking which ones are valid.
     }
 
     @Override

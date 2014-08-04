@@ -40,6 +40,10 @@ import org.codice.nitf.filereader.NitfFile;
 import org.codice.nitf.filereader.NitfFileSecurityMetadata;
 import org.codice.nitf.filereader.NitfImageSegment;
 import org.codice.nitf.filereader.NitfSecurityMetadata;
+import org.codice.nitf.filereader.Tre;
+import org.codice.nitf.filereader.TreCollection;
+import org.codice.nitf.filereader.TreEntry;
+import org.codice.nitf.filereader.TreGroup;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -158,13 +162,59 @@ public class NitfInputTransformer implements InputTransformer {
         // TODO: FBKGC
         metadataXml.append(buildMetadataEntry("originatorsName", nitfFile.getOriginatorsName()));
         metadataXml.append(buildMetadataEntry("originatorsPhoneNumber", nitfFile.getOriginatorsPhoneNumber()));
-        // TODO: output TREs for file
+        metadataXml.append(buildTREsMetadata(nitfFile.getTREsRawStructure()));
         metadataXml.append("  </file>\n");
         // TODO: output each image
         // TODO: output TREs for each image
         // TODO: same for graphic, text
         metadataXml.append("</metadata>\n");
         metacard.setMetadata(metadataXml.toString());
+    }
+
+    private String buildTREsMetadata(TreCollection treCollection) {
+        StringBuilder treXml = new StringBuilder();
+        for (Tre tre : treCollection.getTREs()) {
+            outputThisTre(treXml, tre);
+        }
+        return treXml.toString();
+    }
+
+    private static void outputThisTre(StringBuilder treXml, Tre tre) {
+        treXml.append("    <tre name=\"" + tre.getName().trim() + "\">\n");
+        for (TreEntry entry : tre.getEntries()) {
+            outputThisEntry(treXml, entry, 2);
+        }
+        treXml.append("    </tre>\n");
+    }
+
+    private static void doIndent(StringBuilder treXml, int indentLevel) {
+        for (int i = 0; i < indentLevel; ++i) {
+            treXml.append("    ");
+        }
+    }
+
+    private static void outputThisEntry(StringBuilder treXml, TreEntry entry, int indentLevel) {
+        if (entry.getFieldValue() != null) {
+            doIndent(treXml, indentLevel);
+            treXml.append("<field name=\"" + entry.getName() + "\" value=\"" + entry.getFieldValue() + "\" />\n");
+        }
+        if ((entry.getGroups() != null) && (entry.getGroups().size() > 0)) {
+            doIndent(treXml, indentLevel);
+            treXml.append("<repeated name=\"" + entry.getName() + "\" number=\"" + entry.getGroups().size() + "\">\n");
+            int i = 0;
+            for (TreGroup group : entry.getGroups()) {
+                doIndent(treXml, indentLevel + 1);
+                treXml.append(String.format("<group index=\"%d\">\n", i));
+                for (TreEntry groupEntry : group.getEntries()) {
+                    outputThisEntry(treXml, groupEntry, indentLevel + 2);
+                }
+                doIndent(treXml, indentLevel + 1);
+                treXml.append(String.format("</group>\n"));
+                i = i + 1;
+            }
+            doIndent(treXml, indentLevel);
+            treXml.append("</repeated>\n");
+        }
     }
 
     private String buildMetadataEntry(String label, int value) {

@@ -177,6 +177,9 @@ public class NitfInputTransformer implements InputTransformer {
             metadataXml.append(buildMetadataEntry("numberOfRows", image.getNumberOfRows()));
             metadataXml.append(buildMetadataEntry("numberOfColumns", image.getNumberOfColumns()));
             metadataXml.append(buildMetadataEntry("pixelValueType", image.getPixelValueType().toString()));
+            metadataXml.append(buildMetadataEntry("imageRepresentation", image.getImageRepresentation().toString()));
+            metadataXml.append(buildMetadataEntry("imageCategory", image.getImageCategory().toString()));
+            metadataXml.append(buildMetadataEntry("actualBitsPerPixelPerBand", image.getActualBitsPerPixelPerBand()));
             // TODO: output rest of image metadata
             // TODO: output TREs for each image
             metadataXml.append("  </image>\n");

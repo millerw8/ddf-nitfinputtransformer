@@ -180,6 +180,14 @@ public class NitfInputTransformer implements InputTransformer {
             metadataXml.append(buildMetadataEntry("imageRepresentation", image.getImageRepresentation().toString()));
             metadataXml.append(buildMetadataEntry("imageCategory", image.getImageCategory().toString()));
             metadataXml.append(buildMetadataEntry("actualBitsPerPixelPerBand", image.getActualBitsPerPixelPerBand()));
+            metadataXml.append(buildMetadataEntry("pixelJustification", image.getPixelJustification().toString()));
+            metadataXml.append(buildMetadataEntry("imageCoordinatesRepresentation", image.getImageCoordinatesRepresentation().toString()));
+            for (int j = 0; j < image.getNumberOfImageComments(); ++j) {
+                metadataXml.append(buildMetadataEntry("imageComment", image.getImageCommentZeroBase(j)));
+            }
+            metadataXml.append(buildMetadataEntry("imageCompression", image.getImageCompression().toString()));
+            metadataXml.append(buildMetadataEntry("compressionRate", image.getCompressionRate()));
+            metadataXml.append(buildMetadataEntry("imageMode", image.getImageMode().toString()));
             // TODO: output rest of image metadata
             // TODO: output TREs for each image
             metadataXml.append("  </image>\n");

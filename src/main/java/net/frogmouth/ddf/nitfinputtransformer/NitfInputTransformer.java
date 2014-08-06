@@ -275,6 +275,8 @@ public class NitfInputTransformer implements InputTransformer {
 
     private void addSecurityMetadata(StringBuilder metadataXml, NitfSecurityMetadata security) {
         metadataXml.append(buildMetadataEntry("securityClassification", security.getSecurityClassification().toString()));
+        // TODO: security classifications system if NITF 2.1/NSIF 1.0.
+        metadataXml.append(buildMetadataEntry("securityCodewords", security.getCodewords()));
         // TODO: add rest of security fields, checking which ones are valid.
     }
 

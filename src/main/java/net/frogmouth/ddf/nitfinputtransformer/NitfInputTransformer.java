@@ -27,7 +27,6 @@ import ddf.catalog.transform.CatalogTransformerException;
 import ddf.catalog.transform.InputTransformer;
 
 import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LinearRing;
 import com.vividsolutions.jts.geom.MultiPolygon;
@@ -168,7 +167,7 @@ public class NitfInputTransformer implements InputTransformer {
         for (int i = 0; i < nitfFile.getNumberOfImageSegments(); ++i) {
             NitfImageSegment image = nitfFile.getImageSegmentZeroBase(i);
             metadataXml.append("  <image>\n");
-            metadataXml.append(buildMetadataEntry("imageIdentifer1", image.getImageIdentifier1()));
+            metadataXml.append(buildMetadataEntry("imageIdentifer1", image.getIdentifier()));
             metadataXml.append(buildMetadataEntry("imageDateTime", image.getImageDateTime()));
             metadataXml.append(buildMetadataEntry("imageTargetId", image.getImageTargetId()));
             metadataXml.append(buildMetadataEntry("imageIdentifer2", image.getImageIdentifier2()));

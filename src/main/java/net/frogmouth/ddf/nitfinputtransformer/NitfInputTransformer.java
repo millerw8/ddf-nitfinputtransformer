@@ -131,14 +131,14 @@ public class NitfInputTransformer implements InputTransformer {
                     System.out.println("Unsupported representation:" + segment.getImageCoordinatesRepresentation());
                 }
             }
-            Polygon polyAry[] = polygons.toArray(new Polygon[0]);
+            Polygon[] polyAry = polygons.toArray(new Polygon[0]);
             MultiPolygon multiPolygon = geomFactory.createMultiPolygon(polyAry);
             metacard.setLocation(multiPolygon.toText());
         }
     }
 
     private Polygon getPolygonForSegment(NitfImageSegment segment, GeometryFactory geomFactory) {
-        Coordinate coords[] = new Coordinate[5];
+        Coordinate[] coords = new Coordinate[5];
         ImageCoordinates imageCoordinates = segment.getImageCoordinates();
         coords[0] = new Coordinate(imageCoordinates.getCoordinate00().getLongitude(), imageCoordinates.getCoordinate00().getLatitude());
         coords[4] = new Coordinate(coords[0]);

@@ -77,7 +77,7 @@ public class NitfInputTransformer implements InputTransformer {
 
         MetacardImpl metacard = new MetacardImpl(BasicTypes.BASIC_METACARD);
         try {
-            NitfFile nitfFile = NitfFileFactory.parse(input);
+            NitfFile nitfFile = NitfFileFactory.parseHeadersOnly(input);
             metacard.setCreatedDate(nitfFile.getFileDateTime());
             // TODO: modified date from HISTOA?
             metacard.setTitle(nitfFile.getFileTitle());

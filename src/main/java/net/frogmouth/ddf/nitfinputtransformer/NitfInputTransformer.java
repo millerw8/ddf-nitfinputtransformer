@@ -33,17 +33,17 @@ import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Polygon;
 import com.vividsolutions.jts.geom.PrecisionModel;
 
-import org.codice.nitf.filereader.ImageCoordinates;
-import org.codice.nitf.filereader.ImageCoordinatesRepresentation;
-import org.codice.nitf.filereader.NitfFile;
-import org.codice.nitf.filereader.NitfFileFactory;
-import org.codice.nitf.filereader.NitfFileSecurityMetadata;
-import org.codice.nitf.filereader.NitfImageSegment;
-import org.codice.nitf.filereader.NitfSecurityMetadata;
-import org.codice.nitf.filereader.Tre;
-import org.codice.nitf.filereader.TreCollection;
-import org.codice.nitf.filereader.TreEntry;
-import org.codice.nitf.filereader.TreGroup;
+import org.codice.imaging.nitf.core.ImageCoordinates;
+import org.codice.imaging.nitf.core.ImageCoordinatesRepresentation;
+import org.codice.imaging.nitf.core.NitfFile;
+import org.codice.imaging.nitf.core.NitfFileFactory;
+import org.codice.imaging.nitf.core.NitfFileSecurityMetadata;
+import org.codice.imaging.nitf.core.NitfImageSegment;
+import org.codice.imaging.nitf.core.NitfSecurityMetadata;
+import org.codice.imaging.nitf.core.Tre;
+import org.codice.imaging.nitf.core.TreCollection;
+import org.codice.imaging.nitf.core.TreEntry;
+import org.codice.imaging.nitf.core.TreGroup;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

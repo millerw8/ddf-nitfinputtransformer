@@ -169,7 +169,9 @@ public class NitfInputTransformer implements InputTransformer {
             metadataXml.append("  <image>\n");
             metadataXml.append(buildMetadataEntry("imageIdentifer1", image.getIdentifier()));
             metadataXml.append(buildMetadataEntry("imageDateTime", image.getImageDateTime()));
-            metadataXml.append(buildMetadataEntry("imageTargetId", image.getImageTargetId()));
+            metadataXml.append(buildMetadataEntry("imageBasicEncyclopediaNumber", image.getImageTargetId().getBasicEncyclopediaNumber().trim()));
+            metadataXml.append(buildMetadataEntry("imageOSuffix", image.getImageTargetId().getOSuffix().trim()));
+            metadataXml.append(buildMetadataEntry("imageCountryCode", image.getImageTargetId().getCountryCode().trim()));
             metadataXml.append(buildMetadataEntry("imageIdentifer2", image.getImageIdentifier2()));
             addSecurityMetadata(metadataXml, image.getSecurityMetadata());
             metadataXml.append(buildMetadataEntry("imageSource", image.getImageSource()));

@@ -16,6 +16,7 @@ import java.io.InputStream;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import org.apache.commons.lang3.StringEscapeUtils;
 
@@ -121,7 +122,7 @@ public class NitfInputTransformer implements InputTransformer {
                 System.out.println("Unsupported representation:" + segment.getImageCoordinatesRepresentation());
             }
         } else {
-            ArrayList<Polygon> polygons = new ArrayList<Polygon>();
+            List<Polygon> polygons = new ArrayList<Polygon>();
             for (int i = 0; i < nitfFile.getNumberOfImageSegments(); ++i) {
                 NitfImageSegment segment = nitfFile.getImageSegmentZeroBase(i);
                 if ((segment.getImageCoordinatesRepresentation() == ImageCoordinatesRepresentation.GEOGRAPHIC) ||
@@ -189,8 +190,22 @@ public class NitfInputTransformer implements InputTransformer {
             metadataXml.append(buildMetadataEntry("imageCompression", image.getImageCompression().toString()));
             metadataXml.append(buildMetadataEntry("compressionRate", image.getCompressionRate()));
             metadataXml.append(buildMetadataEntry("imageMode", image.getImageMode().toString()));
-            // TODO: output rest of image metadata
-            // TODO: output TREs for each image
+            metadataXml.append(buildMetadataEntry("numberOfBlocksPerRow", image.getNumberOfBlocksPerRow()));
+            metadataXml.append(buildMetadataEntry("numberOfBlocksPerColumn", image.getNumberOfBlocksPerColumn()));
+            metadataXml.append(buildMetadataEntry("numberOfPixelsPerBlockHorizontal", image.getNumberOfPixelsPerBlockHorizontal()));
+            metadataXml.append(buildMetadataEntry("numberOfPixelsPerBlockVertical", image.getNumberOfPixelsPerBlockVertical()));
+            metadataXml.append(buildMetadataEntry("numberOfBitsPerPixelPerBand", image.getNumberOfBitsPerPixelPerBand()));
+            metadataXml.append(buildMetadataEntry("imageDisplayLevel", image.getImageDisplayLevel()));
+            metadataXml.append(buildMetadataEntry("imageAttachmentLevel", image.getAttachmentLevel()));
+            metadataXml.append(buildMetadataEntry("imageLocationRow", image.getImageLocationRow()));
+            metadataXml.append(buildMetadataEntry("imageLocationColumn", image.getImageLocationColumn()));
+            if (image.getImageMagnification() != null) {
+                metadataXml.append(buildMetadataEntry("imageMagnification", image.getImageMagnification()));
+            }
+            if (image.getImageCoordinates() != null) {
+                metadataXml.append(buildMetadataEntry("imageCoordinates", image.getImageCoordinates().toString()));
+            }
+            metadataXml.append(buildTREsMetadata(image.getTREsRawStructure()));
             metadataXml.append("  </image>\n");
         }
         // TODO: data and TREs for graphic, symbol, label, text

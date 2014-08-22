@@ -39,8 +39,12 @@ import org.codice.imaging.nitf.core.ImageCoordinatesRepresentation;
 import org.codice.imaging.nitf.core.NitfFile;
 import org.codice.imaging.nitf.core.NitfFileFactory;
 import org.codice.imaging.nitf.core.NitfFileSecurityMetadata;
+import org.codice.imaging.nitf.core.NitfLabelSegment;
+import org.codice.imaging.nitf.core.NitfGraphicSegment;
 import org.codice.imaging.nitf.core.NitfImageSegment;
 import org.codice.imaging.nitf.core.NitfSecurityMetadata;
+import org.codice.imaging.nitf.core.NitfSymbolSegment;
+import org.codice.imaging.nitf.core.NitfTextSegment;
 import org.codice.imaging.nitf.core.Tre;
 import org.codice.imaging.nitf.core.TreCollection;
 import org.codice.imaging.nitf.core.TreEntry;
@@ -160,7 +164,9 @@ public class NitfInputTransformer implements InputTransformer {
         metadataXml.append(buildMetadataEntry("fileDateTime", nitfFile.getFileDateTime()));
         metadataXml.append(buildMetadataEntry("fileTitle", nitfFile.getFileTitle()));
         addFileSecurityMetadata(metadataXml, nitfFile);
-        // TODO: FBKGC
+        if (nitfFile.getFileBackgroundColour() != null) {
+            metadataXml.append(buildMetadataEntry("fileBackgroundColour", nitfFile.getFileBackgroundColour().toString()));
+        }
         metadataXml.append(buildMetadataEntry("originatorsName", nitfFile.getOriginatorsName()));
         metadataXml.append(buildMetadataEntry("originatorsPhoneNumber", nitfFile.getOriginatorsPhoneNumber()));
         metadataXml.append(buildTREsMetadata(nitfFile.getTREsRawStructure()));
@@ -208,7 +214,72 @@ public class NitfInputTransformer implements InputTransformer {
             metadataXml.append(buildTREsMetadata(image.getTREsRawStructure()));
             metadataXml.append("  </image>\n");
         }
-        // TODO: data and TREs for graphic, symbol, label, text
+        for (int i = 0; i < nitfFile.getNumberOfGraphicSegments(); ++i) {
+            NitfGraphicSegment graphic = nitfFile.getGraphicSegmentZeroBase(i);
+            metadataXml.append("  <graphic>\n");
+            metadataXml.append(buildMetadataEntry("graphicIdentifier", graphic.getIdentifier()));
+            metadataXml.append(buildMetadataEntry("graphicName", graphic.getGraphicName()));
+            addSecurityMetadata(metadataXml, graphic.getSecurityMetadata());
+            metadataXml.append(buildMetadataEntry("graphicDisplayLevel", graphic.getGraphicDisplayLevel()));
+            metadataXml.append(buildMetadataEntry("graphicAttachmentLevel", graphic.getAttachmentLevel())); metadataXml.append(buildMetadataEntry("graphicLocationRow", graphic.getGraphicLocationRow()));
+            metadataXml.append(buildMetadataEntry("graphicLocationColumn", graphic.getGraphicLocationColumn()));
+            metadataXml.append(buildMetadataEntry("graphicBoundingBox1Row", graphic.getBoundingBox1Row()));
+            metadataXml.append(buildMetadataEntry("graphicBoundingBox1Column", graphic.getBoundingBox1Column()));
+            metadataXml.append(buildMetadataEntry("graphicBoundingBox2Row", graphic.getBoundingBox2Row()));
+            metadataXml.append(buildMetadataEntry("graphicBoundingBox2Column", graphic.getBoundingBox2Column()));
+            metadataXml.append(buildMetadataEntry("graphicColour", graphic.getGraphicColour().toString()));
+            metadataXml.append(buildTREsMetadata(graphic.getTREsRawStructure()));
+            metadataXml.append("  </graphic>\n");
+        }
+        for (int i = 0; i < nitfFile.getNumberOfSymbolSegments(); ++i) {
+            NitfSymbolSegment symbol = nitfFile.getSymbolSegmentZeroBase(i);
+            metadataXml.append("  <symbol>\n");
+            metadataXml.append(buildMetadataEntry("symbolIdentifier", symbol.getIdentifier()));
+            metadataXml.append(buildMetadataEntry("symbolName", symbol.getSymbolName()));
+            addSecurityMetadata(metadataXml, symbol.getSecurityMetadata());
+            metadataXml.append(buildMetadataEntry("symbolType", symbol.getSymbolType().toString()));
+            metadataXml.append(buildMetadataEntry("symbolColour", symbol.getSymbolColour().toString()));
+            metadataXml.append(buildMetadataEntry("numberOfLinesPerSymbol", symbol.getNumberOfLinesPerSymbol()));
+            metadataXml.append(buildMetadataEntry("numberOfPixelsPerLine", symbol.getNumberOfPixelsPerLine()));
+            metadataXml.append(buildMetadataEntry("lineWidth", symbol.getLineWidth()));
+            metadataXml.append(buildMetadataEntry("numberOfBitsPerPixel", symbol.getNumberOfBitsPerPixel()));
+            metadataXml.append(buildMetadataEntry("symbolDisplayLevel", symbol.getSymbolDisplayLevel()));
+            metadataXml.append(buildMetadataEntry("symbolAttachmentLevel", symbol.getAttachmentLevel())); metadataXml.append(buildMetadataEntry("symbolLocationRow", symbol.getSymbolLocationRow()));
+            metadataXml.append(buildMetadataEntry("symbolLocationColumn", symbol.getSymbolLocationColumn()));
+            metadataXml.append(buildMetadataEntry("symbolLocation2Row", symbol.getSymbolLocation2Row()));
+            metadataXml.append(buildMetadataEntry("symbolLocation2Column", symbol.getSymbolLocation2Column()));
+            metadataXml.append(buildMetadataEntry("symbolNumber", symbol.getSymbolNumber()));
+            metadataXml.append(buildMetadataEntry("symbolRotation", symbol.getSymbolRotation()));
+            metadataXml.append(buildTREsMetadata(symbol.getTREsRawStructure()));
+            metadataXml.append("  </symbol>\n");
+        }
+        for (int i = 0; i < nitfFile.getNumberOfLabelSegments(); ++i) {
+            NitfLabelSegment label = nitfFile.getLabelSegmentZeroBase(i);
+            metadataXml.append("  <label>\n");
+            metadataXml.append(buildMetadataEntry("labelIdentifier", label.getIdentifier()));
+            addSecurityMetadata(metadataXml, label.getSecurityMetadata());
+            metadataXml.append(buildMetadataEntry("labelLocationRow", label.getLabelLocationRow()));
+            metadataXml.append(buildMetadataEntry("labelLocationColumn", label.getLabelLocationColumn()));
+            metadataXml.append(buildMetadataEntry("labelCellWidth", label.getLabelCellWidth()));
+            metadataXml.append(buildMetadataEntry("labelCellHeight", label.getLabelCellHeight()));
+            metadataXml.append(buildMetadataEntry("labelDisplayLevel", label.getLabelDisplayLevel()));
+            metadataXml.append(buildMetadataEntry("labelAttachmentLevel", label.getAttachmentLevel()));
+            metadataXml.append(buildMetadataEntry("labelTextColour", label.getLabelTextColour().toString()));
+            metadataXml.append(buildMetadataEntry("labelBackgroundColour", label.getLabelBackgroundColour().toString()));
+            metadataXml.append(buildTREsMetadata(label.getTREsRawStructure()));
+            metadataXml.append("  </label>\n");
+        }
+        for (int i = 0; i < nitfFile.getNumberOfTextSegments(); ++i) {
+            NitfTextSegment text = nitfFile.getTextSegmentZeroBase(i);
+            metadataXml.append("  <text>\n");
+            metadataXml.append(buildMetadataEntry("textIdentifier", text.getIdentifier()));
+            addSecurityMetadata(metadataXml, text.getSecurityMetadata());
+            metadataXml.append(buildMetadataEntry("textDateTime", text.getTextDateTime().toString()));
+            metadataXml.append(buildMetadataEntry("textTitle", text.getTextTitle()));
+            metadataXml.append(buildMetadataEntry("textFormat", text.getTextFormat().toString()));
+            metadataXml.append(buildTREsMetadata(text.getTREsRawStructure()));
+            metadataXml.append("  </text>\n");
+        }
         metadataXml.append("</metadata>\n");
         metacard.setMetadata(metadataXml.toString());
     }
@@ -286,14 +357,43 @@ public class NitfInputTransformer implements InputTransformer {
     private void addFileSecurityMetadata(StringBuilder metadataXml, NitfFile nitfFile) {
         NitfFileSecurityMetadata security = nitfFile.getFileSecurityMetadata();
         addSecurityMetadata(metadataXml, security);
-        // TODO: add FSCOP / FSCPYN values.
+        metadataXml.append(buildMetadataEntry("securityFileCopyNumber", nitfFile.getFileSecurityMetadata().getFileCopyNumber()));
+        metadataXml.append(buildMetadataEntry("securityFileNumberOfCopies", nitfFile.getFileSecurityMetadata().getFileNumberOfCopies()));
     }
 
     private void addSecurityMetadata(StringBuilder metadataXml, NitfSecurityMetadata security) {
         metadataXml.append(buildMetadataEntry("securityClassification", security.getSecurityClassification().toString()));
-        // TODO: security classifications system if NITF 2.1/NSIF 1.0.
+        if (security.getSecurityClassificationSystem() != null) {
+            metadataXml.append(buildMetadataEntry("securityClassificationSystem", security.getSecurityClassificationSystem()));
+        }
         metadataXml.append(buildMetadataEntry("securityCodewords", security.getCodewords()));
-        // TODO: add rest of security fields, checking which ones are valid.
+        if (security.getControlAndHandling() != null) {
+            metadataXml.append(buildMetadataEntry("securityControlAndHandling", security.getControlAndHandling()));
+        }
+        if (security.getReleaseInstructions() != null) {
+            metadataXml.append(buildMetadataEntry("securityReleaseInstructions", security.getReleaseInstructions()));
+        }
+        if (security.getDeclassificationType() != null) {
+            metadataXml.append(buildMetadataEntry("securityDeclassificationType", security.getDeclassificationType()));
+        }
+        if (security.getDeclassificationDate() != null) {
+            metadataXml.append(buildMetadataEntry("securityDeclassificationDate", security.getDeclassificationDate()));
+        }
+        if (security.getDeclassificationExemption() != null) {
+            metadataXml.append(buildMetadataEntry("securityDeclassificationExemption", security.getDeclassificationExemption()));
+        }
+        if (security.getDowngrade() != null) {
+            metadataXml.append(buildMetadataEntry("securityDowngrade", security.getDowngrade()));
+        }
+        if (security.getDowngradeDate() != null) {
+            metadataXml.append(buildMetadataEntry("securityDowngradeDate", security.getDowngradeDate()));
+        }
+        if (security.getDowngradeDateOrSpecialCase() != null) {
+            metadataXml.append(buildMetadataEntry("securityDowngradeDateOrSpecialCase", security.getDowngradeDateOrSpecialCase()));
+        }
+        if (security.getDowngradeEvent() != null) {
+            metadataXml.append(buildMetadataEntry("securityDowngradeEvent", security.getDowngradeEvent()));
+        }
     }
 
     @Override

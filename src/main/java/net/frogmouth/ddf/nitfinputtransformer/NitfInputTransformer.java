@@ -221,7 +221,8 @@ public class NitfInputTransformer implements InputTransformer {
             metadataXml.append(buildMetadataEntry("graphicName", graphic.getGraphicName()));
             addSecurityMetadata(metadataXml, graphic.getSecurityMetadata());
             metadataXml.append(buildMetadataEntry("graphicDisplayLevel", graphic.getGraphicDisplayLevel()));
-            metadataXml.append(buildMetadataEntry("graphicAttachmentLevel", graphic.getAttachmentLevel())); metadataXml.append(buildMetadataEntry("graphicLocationRow", graphic.getGraphicLocationRow()));
+            metadataXml.append(buildMetadataEntry("graphicAttachmentLevel", graphic.getAttachmentLevel()));
+            metadataXml.append(buildMetadataEntry("graphicLocationRow", graphic.getGraphicLocationRow()));
             metadataXml.append(buildMetadataEntry("graphicLocationColumn", graphic.getGraphicLocationColumn()));
             metadataXml.append(buildMetadataEntry("graphicBoundingBox1Row", graphic.getBoundingBox1Row()));
             metadataXml.append(buildMetadataEntry("graphicBoundingBox1Column", graphic.getBoundingBox1Column()));
@@ -244,7 +245,8 @@ public class NitfInputTransformer implements InputTransformer {
             metadataXml.append(buildMetadataEntry("lineWidth", symbol.getLineWidth()));
             metadataXml.append(buildMetadataEntry("numberOfBitsPerPixel", symbol.getNumberOfBitsPerPixel()));
             metadataXml.append(buildMetadataEntry("symbolDisplayLevel", symbol.getSymbolDisplayLevel()));
-            metadataXml.append(buildMetadataEntry("symbolAttachmentLevel", symbol.getAttachmentLevel())); metadataXml.append(buildMetadataEntry("symbolLocationRow", symbol.getSymbolLocationRow()));
+            metadataXml.append(buildMetadataEntry("symbolAttachmentLevel", symbol.getAttachmentLevel()));
+            metadataXml.append(buildMetadataEntry("symbolLocationRow", symbol.getSymbolLocationRow()));
             metadataXml.append(buildMetadataEntry("symbolLocationColumn", symbol.getSymbolLocationColumn()));
             metadataXml.append(buildMetadataEntry("symbolLocation2Row", symbol.getSymbolLocation2Row()));
             metadataXml.append(buildMetadataEntry("symbolLocation2Column", symbol.getSymbolLocation2Column()));

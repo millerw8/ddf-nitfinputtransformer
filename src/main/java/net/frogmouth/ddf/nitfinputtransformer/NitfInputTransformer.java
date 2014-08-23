@@ -313,7 +313,7 @@ public class NitfInputTransformer implements InputTransformer {
             doIndent(treXml, indentLevel);
             treXml.append("<field name=\"" + entry.getName() + "\" value=\"" + entry.getFieldValue() + "\" />\n");
         }
-        if ((entry.getGroups() != null) && (entry.getGroups().size() > 0)) {
+        if ((entry.getGroups() != null) && (!entry.getGroups().isEmpty())) {
             doIndent(treXml, indentLevel);
             treXml.append("<repeated name=\"" + entry.getName() + "\" number=\"" + entry.getGroups().size() + "\">\n");
             int i = 0;

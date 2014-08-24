@@ -365,36 +365,22 @@ public class NitfInputTransformer implements InputTransformer {
 
     private void addSecurityMetadata(StringBuilder metadataXml, NitfSecurityMetadata security) {
         metadataXml.append(buildMetadataEntry("securityClassification", security.getSecurityClassification().toString()));
-        if (security.getSecurityClassificationSystem() != null) {
-            metadataXml.append(buildMetadataEntry("securityClassificationSystem", security.getSecurityClassificationSystem()));
-        }
+        addMetadataIfNotNull(metadataXml, "securityClassificationSystem", security.getSecurityClassificationSystem());
         metadataXml.append(buildMetadataEntry("securityCodewords", security.getCodewords()));
-        if (security.getControlAndHandling() != null) {
-            metadataXml.append(buildMetadataEntry("securityControlAndHandling", security.getControlAndHandling()));
-        }
-        if (security.getReleaseInstructions() != null) {
-            metadataXml.append(buildMetadataEntry("securityReleaseInstructions", security.getReleaseInstructions()));
-        }
-        if (security.getDeclassificationType() != null) {
-            metadataXml.append(buildMetadataEntry("securityDeclassificationType", security.getDeclassificationType()));
-        }
-        if (security.getDeclassificationDate() != null) {
-            metadataXml.append(buildMetadataEntry("securityDeclassificationDate", security.getDeclassificationDate()));
-        }
-        if (security.getDeclassificationExemption() != null) {
-            metadataXml.append(buildMetadataEntry("securityDeclassificationExemption", security.getDeclassificationExemption()));
-        }
-        if (security.getDowngrade() != null) {
-            metadataXml.append(buildMetadataEntry("securityDowngrade", security.getDowngrade()));
-        }
-        if (security.getDowngradeDate() != null) {
-            metadataXml.append(buildMetadataEntry("securityDowngradeDate", security.getDowngradeDate()));
-        }
-        if (security.getDowngradeDateOrSpecialCase() != null) {
-            metadataXml.append(buildMetadataEntry("securityDowngradeDateOrSpecialCase", security.getDowngradeDateOrSpecialCase()));
-        }
-        if (security.getDowngradeEvent() != null) {
-            metadataXml.append(buildMetadataEntry("securityDowngradeEvent", security.getDowngradeEvent()));
+        addMetadataIfNotNull(metadataXml, "securityControlAndHandling", security.getControlAndHandling());
+        addMetadataIfNotNull(metadataXml, "securityReleaseInstructions", security.getReleaseInstructions());
+        addMetadataIfNotNull(metadataXml, "securityDeclassificationType", security.getDeclassificationType());
+        addMetadataIfNotNull(metadataXml, "securityDeclassificationDate", security.getDeclassificationDate());
+        addMetadataIfNotNull(metadataXml, "securityDeclassificationExemption", security.getDeclassificationExemption());
+        addMetadataIfNotNull(metadataXml, "securityDowngrade", security.getDowngrade());
+        addMetadataIfNotNull(metadataXml, "securityDowngradeDate", security.getDowngradeDate());
+        addMetadataIfNotNull(metadataXml, "securityDowngradeDateOrSpecialCase", security.getDowngradeDateOrSpecialCase());
+        addMetadataIfNotNull(metadataXml, "securityDowngradeEvent", security.getDowngradeEvent());
+    }
+
+    private void addMetadataIfNotNull(StringBuilder metadataXml, String label, String value) {
+        if (value != null) {
+            metadataXml.append(buildMetadataEntry(label, value));
         }
     }
 

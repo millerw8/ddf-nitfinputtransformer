@@ -12,42 +12,32 @@
 package net.frogmouth.ddf.nitfinputtransformer;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertNotNull;
-import static org.mockito.Mockito.*;
-
-import org.apache.commons.io.FileUtils;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
+import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.TimeZone;
 import java.util.List;
+import java.util.TimeZone;
 
 import org.junit.Test;
 import org.osgi.framework.BundleContext;
 
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.io.ParseException;
-import com.vividsolutions.jts.io.WKTReader;
-
 import ddf.catalog.data.Metacard;
 import ddf.catalog.data.QualifiedMetacardType;
-import ddf.catalog.data.MetacardTypeRegistry;
 import ddf.catalog.transform.CatalogTransformerException;
 import ddf.catalog.source.UnsupportedQueryException;
 import ddf.catalog.source.SourceUnavailableException;
 import ddf.catalog.federation.FederationException;
-import ddf.catalog.operation.*;
+import ddf.catalog.operation.QueryRequest;
+import ddf.catalog.operation.QueryResponseImpl;
 
 public class TestBasicInputTransformer {
     private static final BundleContext context = mock(BundleContext.class);

@@ -36,6 +36,7 @@ import com.vividsolutions.jts.geom.PrecisionModel;
 
 import org.codice.imaging.nitf.core.ImageCoordinates;
 import org.codice.imaging.nitf.core.ImageCoordinatesRepresentation;
+import org.codice.imaging.nitf.core.NitfDateTime;
 import org.codice.imaging.nitf.core.NitfFile;
 import org.codice.imaging.nitf.core.NitfFileFactory;
 import org.codice.imaging.nitf.core.NitfFileSecurityMetadata;
@@ -83,7 +84,7 @@ public class NitfInputTransformer implements InputTransformer {
         MetacardImpl metacard = new MetacardImpl(BasicTypes.BASIC_METACARD);
         try {
             NitfFile nitfFile = NitfFileFactory.parseHeadersOnly(input);
-            metacard.setCreatedDate(nitfFile.getFileDateTime());
+            metacard.setCreatedDate(nitfFile.getFileDateTime().toDate());
             // TODO: modified date from HISTOA?
             metacard.setTitle(nitfFile.getFileTitle());
 
@@ -340,8 +341,8 @@ public class NitfInputTransformer implements InputTransformer {
         return buildMetadataEntry(label, Long.toString(value));
     }
 
-    private String buildMetadataEntry(String label, Date value) {
-        return buildMetadataEntry(label, value.toString());
+    private String buildMetadataEntry(String label, NitfDateTime value) {
+        return buildMetadataEntry(label, value.toDate().toString());
     }
 
     private String buildMetadataEntry(String label, String value) {

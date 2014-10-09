@@ -37,7 +37,7 @@ import com.vividsolutions.jts.geom.PrecisionModel;
 import org.codice.imaging.nitf.core.ImageCoordinates;
 import org.codice.imaging.nitf.core.ImageCoordinatesRepresentation;
 import org.codice.imaging.nitf.core.NitfDateTime;
-import org.codice.imaging.nitf.core.NitfFile;
+import org.codice.imaging.nitf.core.Nitf;
 import org.codice.imaging.nitf.core.NitfFileFactory;
 import org.codice.imaging.nitf.core.NitfFileSecurityMetadata;
 import org.codice.imaging.nitf.core.NitfLabelSegment;
@@ -83,7 +83,7 @@ public class NitfInputTransformer implements InputTransformer {
 
         MetacardImpl metacard = new MetacardImpl(BasicTypes.BASIC_METACARD);
         try {
-            NitfFile nitfFile = NitfFileFactory.parseHeadersOnly(input);
+            Nitf nitfFile = NitfFileFactory.parseHeadersOnly(input);
             metacard.setCreatedDate(nitfFile.getFileDateTime().toDate());
             // TODO: modified date from HISTOA?
             metacard.setTitle(nitfFile.getFileTitle());
@@ -107,7 +107,7 @@ public class NitfInputTransformer implements InputTransformer {
         return metacard;
     }
 
-    private void setLocation(NitfFile nitfFile, MetacardImpl metacard) {
+    private void setLocation(Nitf nitfFile, MetacardImpl metacard) {
         GeometryFactory geomFactory = new GeometryFactory(new PrecisionModel(com.vividsolutions.jts.geom.PrecisionModel.FLOATING), 4326);
         if (nitfFile.getNumberOfImageSegments() < 1) {
             return;
@@ -155,7 +155,7 @@ public class NitfInputTransformer implements InputTransformer {
         return geomFactory.createPolygon(externalRing, null);
     }
 
-    private void setMetadata(NitfFile nitfFile, MetacardImpl metacard) {
+    private void setMetadata(Nitf nitfFile, MetacardImpl metacard) {
         StringBuilder metadataXml = new StringBuilder();
         metadataXml.append("<metadata>\n");
         metadataXml.append("  <file>\n");
@@ -357,7 +357,7 @@ public class NitfInputTransformer implements InputTransformer {
         return entryBuilder.toString();
     }
 
-    private void addFileSecurityMetadata(StringBuilder metadataXml, NitfFile nitfFile) {
+    private void addFileSecurityMetadata(StringBuilder metadataXml, Nitf nitfFile) {
         NitfFileSecurityMetadata security = nitfFile.getFileSecurityMetadata();
         addSecurityMetadata(metadataXml, security);
         metadataXml.append(buildMetadataEntry("securityFileCopyNumber", nitfFile.getFileSecurityMetadata().getFileCopyNumber()));

@@ -109,11 +109,11 @@ public class NitfInputTransformer implements InputTransformer {
 
     private void setLocation(Nitf nitfFile, MetacardImpl metacard) {
         GeometryFactory geomFactory = new GeometryFactory(new PrecisionModel(com.vividsolutions.jts.geom.PrecisionModel.FLOATING), 4326);
-        if (nitfFile.getNumberOfImageSegments() < 1) {
+        if (nitfFile.getImageSegments().isEmpty()) {
             return;
         }
-        if (nitfFile.getNumberOfImageSegments() == 1) {
-            NitfImageSegment segment = nitfFile.getImageSegmentZeroBase(0);
+        if (nitfFile.getImageSegments().size() == 1) {
+            NitfImageSegment segment = nitfFile.getImageSegments().get(0);
             if (segment == null) {
                 return;
             }
@@ -128,8 +128,7 @@ public class NitfInputTransformer implements InputTransformer {
             }
         } else {
             List<Polygon> polygons = new ArrayList<Polygon>();
-            for (int i = 0; i < nitfFile.getNumberOfImageSegments(); ++i) {
-                NitfImageSegment segment = nitfFile.getImageSegmentZeroBase(i);
+            for (NitfImageSegment segment : nitfFile.getImageSegments()) {
                 if ((segment.getImageCoordinatesRepresentation() == ImageCoordinatesRepresentation.GEOGRAPHIC) ||
                     (segment.getImageCoordinatesRepresentation() == ImageCoordinatesRepresentation.DECIMALDEGREES)) {
                     polygons.add(getPolygonForSegment(segment, geomFactory));
@@ -172,8 +171,7 @@ public class NitfInputTransformer implements InputTransformer {
         metadataXml.append(buildMetadataEntry("originatorsPhoneNumber", nitfFile.getOriginatorsPhoneNumber()));
         metadataXml.append(buildTREsMetadata(nitfFile.getTREsRawStructure()));
         metadataXml.append("  </file>\n");
-        for (int i = 0; i < nitfFile.getNumberOfImageSegments(); ++i) {
-            NitfImageSegment image = nitfFile.getImageSegmentZeroBase(i);
+        for (NitfImageSegment image : nitfFile.getImageSegments()) {
             metadataXml.append("  <image>\n");
             metadataXml.append(buildMetadataEntry("imageIdentifer1", image.getIdentifier()));
             metadataXml.append(buildMetadataEntry("imageDateTime", image.getImageDateTime()));
@@ -215,8 +213,7 @@ public class NitfInputTransformer implements InputTransformer {
             metadataXml.append(buildTREsMetadata(image.getTREsRawStructure()));
             metadataXml.append("  </image>\n");
         }
-        for (int i = 0; i < nitfFile.getNumberOfGraphicSegments(); ++i) {
-            NitfGraphicSegment graphic = nitfFile.getGraphicSegmentZeroBase(i);
+        for (NitfGraphicSegment graphic : nitfFile.getGraphicSegments()) {
             metadataXml.append("  <graphic>\n");
             metadataXml.append(buildMetadataEntry("graphicIdentifier", graphic.getIdentifier()));
             metadataXml.append(buildMetadataEntry("graphicName", graphic.getGraphicName()));
@@ -233,8 +230,7 @@ public class NitfInputTransformer implements InputTransformer {
             metadataXml.append(buildTREsMetadata(graphic.getTREsRawStructure()));
             metadataXml.append("  </graphic>\n");
         }
-        for (int i = 0; i < nitfFile.getNumberOfSymbolSegments(); ++i) {
-            NitfSymbolSegment symbol = nitfFile.getSymbolSegmentZeroBase(i);
+        for (NitfSymbolSegment symbol : nitfFile.getSymbolSegments()) {
             metadataXml.append("  <symbol>\n");
             metadataXml.append(buildMetadataEntry("symbolIdentifier", symbol.getIdentifier()));
             metadataXml.append(buildMetadataEntry("symbolName", symbol.getSymbolName()));
@@ -256,8 +252,7 @@ public class NitfInputTransformer implements InputTransformer {
             metadataXml.append(buildTREsMetadata(symbol.getTREsRawStructure()));
             metadataXml.append("  </symbol>\n");
         }
-        for (int i = 0; i < nitfFile.getNumberOfLabelSegments(); ++i) {
-            NitfLabelSegment label = nitfFile.getLabelSegmentZeroBase(i);
+        for (NitfLabelSegment label : nitfFile.getLabelSegments()) {
             metadataXml.append("  <label>\n");
             metadataXml.append(buildMetadataEntry("labelIdentifier", label.getIdentifier()));
             addSecurityMetadata(metadataXml, label.getSecurityMetadata());
@@ -272,8 +267,7 @@ public class NitfInputTransformer implements InputTransformer {
             metadataXml.append(buildTREsMetadata(label.getTREsRawStructure()));
             metadataXml.append("  </label>\n");
         }
-        for (int i = 0; i < nitfFile.getNumberOfTextSegments(); ++i) {
-            NitfTextSegment text = nitfFile.getTextSegmentZeroBase(i);
+        for (NitfTextSegment text : nitfFile.getTextSegments()) {
             metadataXml.append("  <text>\n");
             metadataXml.append(buildMetadataEntry("textIdentifier", text.getIdentifier()));
             addSecurityMetadata(metadataXml, text.getSecurityMetadata());

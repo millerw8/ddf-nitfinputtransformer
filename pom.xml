@@ -61,7 +61,7 @@
 
         <dependency>
             <groupId>org.codice.imaging.nitf</groupId>
-            <artifactId>codice-imaging-nitf</artifactId>
+            <artifactId>codice-imaging-nitf-core</artifactId>
             <version>0.1-SNAPSHOT</version>
         </dependency>
 
@@ -114,7 +114,7 @@
                 <configuration>
                     <instructions>
                         <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
-                        <Embed-Dependency>codice-imaging-nitf,commons-lang3</Embed-Dependency>
+                        <Embed-Dependency>codice-imaging-nitf-core,commons-lang3</Embed-Dependency>
                         <Import-Package>
                             ddf.catalog.source,
                             ddf.catalog.transform,

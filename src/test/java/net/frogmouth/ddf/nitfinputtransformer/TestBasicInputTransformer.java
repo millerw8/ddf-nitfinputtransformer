@@ -43,6 +43,10 @@ public class TestBasicInputTransformer {
     private static final BundleContext context = mock(BundleContext.class);
     private static List<QualifiedMetacardType> qmtList = new ArrayList<QualifiedMetacardType>();
 
+    private static final String BE_NUM_NITF = "/WithBE.ntf";
+
+    private static final String TRE_NITF = "/i_3128b.ntf";
+
     public static NitfInputTransformer createTransformer() throws UnsupportedQueryException, SourceUnavailableException, FederationException {
         NitfInputTransformer transformer = new NitfInputTransformer();
         ddf.catalog.CatalogFramework catalog = mock(ddf.catalog.CatalogFramework.class);
@@ -64,7 +68,7 @@ public class TestBasicInputTransformer {
 
     @Test()
     public void testSorcerWithBE() throws IOException, CatalogTransformerException, UnsupportedQueryException, SourceUnavailableException, FederationException, ParseException  {
-        Metacard metacard = createTransformer().transform(getInputStream());
+        Metacard metacard = createTransformer().transform(getInputStream(BE_NUM_NITF));
 
         assertNotNull(metacard);
 
@@ -72,12 +76,24 @@ public class TestBasicInputTransformer {
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         formatter.setTimeZone(TimeZone.getTimeZone("UTC"));
         assertThat(formatter.format(metacard.getCreatedDate()), is("2014-08-17 07:22:41"));
+        System.out.println("metacard = " + metacard.getMetadata());
     }
 
-    private InputStream getInputStream() {
-        final String testfile = "/WithBE.ntf";
+    @Test()
+    public void testTreParsing() throws IOException, CatalogTransformerException, UnsupportedQueryException, SourceUnavailableException, FederationException, ParseException  {
+        Metacard metacard = createTransformer().transform(getInputStream(TRE_NITF));
 
-        assertNotNull("Test file missing", getClass().getResource(testfile));
-        return getClass().getResourceAsStream(testfile);
+        assertNotNull(metacard);
+
+        assertNotNull(metacard.getCreatedDate());
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        formatter.setTimeZone(TimeZone.getTimeZone("UTC"));
+        assertThat(formatter.format(metacard.getCreatedDate()), is("1999-02-10 14:01:44"));
+        System.out.println("metacard = " + metacard.getMetadata());
+    }
+
+    private InputStream getInputStream(String filename) {
+        assertNotNull("Test file missing", getClass().getResource(filename));
+        return getClass().getResourceAsStream(filename);
     }
 }

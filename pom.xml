@@ -24,7 +24,7 @@
     <packaging>bundle</packaging>
 
     <properties>
-        <ddfcatalog.version>2.5.0-SNAPSHOT</ddfcatalog.version>
+        <ddfcatalog.version>2.9.0-SNAPSHOT</ddfcatalog.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
@@ -43,7 +43,13 @@
 
         <dependency>
             <groupId>ddf.catalog.core</groupId>
-            <artifactId>catalog-core-api</artifactId>
+            <artifactId>catalog-core-api-impl</artifactId>
+            <version>${ddfcatalog.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>ddf.catalog.transformer</groupId>
+            <artifactId>catalog-transformer-xml</artifactId>
             <version>${ddfcatalog.version}</version>
         </dependency>
 
@@ -51,6 +57,12 @@
             <groupId>com.vividsolutions</groupId>
             <artifactId>jts</artifactId>
             <version>1.12</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>xerces</groupId>
+                    <artifactId>xercesImpl</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
@@ -62,6 +74,12 @@
         <dependency>
             <groupId>org.codice.imaging.nitf</groupId>
             <artifactId>codice-imaging-nitf-core</artifactId>
+            <version>0.1-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.codice.imaging.nitf</groupId>
+            <artifactId>codice-imaging-cgm</artifactId>
             <version>0.1-SNAPSHOT</version>
         </dependency>
 
@@ -114,23 +132,8 @@
                 <configuration>
                     <instructions>
                         <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
-                        <Embed-Dependency>codice-imaging-nitf-core,commons-lang3</Embed-Dependency>
-                        <Import-Package>
-                            ddf.catalog.source,
-                            ddf.catalog.transform,
-                            ddf.catalog.data,
-                            ddf.catalog.data.metacardtype,
-                            ddf.catalog,
-                            org.osgi.framework,
-                            org.osgi.service.blueprint,
-                            org.osgi.service.cm,
-                            com.vividsolutions.jts.*,
-                            javax.xml.bind.annotation, 
-                            javax.xml.bind,
-                            org.slf4j,
-                            org.w3c.dom,
-                            org.xml.sax
-                        </Import-Package>
+                        <Embed-Dependency>codice-imaging-nitf-core,codice-imaging-cgm,commons-lang3,catalog-core-api-impl</Embed-Dependency>
+                        <Export-Package/>
                     </instructions>
                 </configuration>
             </plugin>
